@@ -10,10 +10,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapter.ViewHolder> {
-    private ArrayList<GroupItem> groupItems;
+
+    private List<Book> groupList;
+
+    public MainRecyclerAdapter(List<Book> list) {
+        groupList = list;
+    }
 
     //===== [Click 이벤트 구현을 위해 추가된 코드] ==========================
     // OnItemClickListener 인터페이스 선언
@@ -22,50 +27,28 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
     }
 
     // OnItemClickListener 참조 변수 선언
-    private OnItemClickListener itemClickListener;
+    private MainRecyclerAdapter.OnItemClickListener itemClickListener;
 
     // OnItemClickListener 전달 메소드
-    public void setOnItemClickListener (OnItemClickListener listener) {
+    public void setOnItemClickListener (MainRecyclerAdapter.OnItemClickListener listener) {
         itemClickListener = listener;
     }
     //=====================================================================
 
-    class ViewHolder extends RecyclerView.ViewHolder {
-        TextView name;
-        TextView cnt;
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            name = (TextView) itemView.findViewById(R.id.name);
-            cnt = (TextView) itemView.findViewById(R.id.cnt);
-
-//            itemView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View a_view) {
-//                    final int position = getAdapterPosition();
-//                    if (position != RecyclerView.NO_POSITION) {
-//                        a_itemClickListener.onItemClick(a_view, position);
-//                    }
-//                }
-//            });
-        }
-
-        void onBind(GroupItem item){
-            name.setText(item.getName());
-            cnt.setText(item.getCnt());
-        }
-    }
-
     @NonNull
     @Override
-    public MainRecyclerAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_item, parent, false);
-        MainRecyclerAdapter.ViewHolder viewHolder = new MainRecyclerAdapter.ViewHolder(view);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        Context context = parent.getContext();
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        View view = inflater.inflate(R.layout.group_item, parent, false);
+        MainRecyclerAdapter.ViewHolder vh = new MainRecyclerAdapter.ViewHolder(view);
 
         //===== [Click 이벤트 구현을 위해 추가된 코드] =====================
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int position = viewHolder.getAdapterPosition();
+                int position = vh.getAdapterPosition();
                 Context context = view.getContext();
                 Intent intent = new Intent(context,BookListActivity.class);
                 ((MainActivity)context).startActivity(intent);
@@ -73,22 +56,31 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
         });
         //==================================================================
 
-        return viewHolder;
+        return vh;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MainRecyclerAdapter.ViewHolder holder, int position) {
-        holder.onBind(groupItems.get(position));
-    }
-
-    public void setFriendList(ArrayList<GroupItem> list){
-        this.groupItems = list;
-        notifyDataSetChanged();
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Book item = groupList.get(position);
+        holder.groupName.setText(item.groupName);
+        holder.bookCnt.setText("("+String.valueOf(item.bookCnt)+")");
     }
 
     @Override
     public int getItemCount() {
-        return groupItems.size();
+        return groupList.size();
     }
 
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        TextView groupName;
+        TextView bookCnt;
+
+        ViewHolder(View itemView) {
+            super(itemView);
+
+            groupName = itemView.findViewById(R.id.item_name);
+            bookCnt = itemView.findViewById(R.id.item_cnt);
+
+        }
+    }
 }

@@ -14,7 +14,7 @@
 
         <!--이름-->
         <TextView
-            android:id="@+id/name"
+            android:id="@+id/item_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="이름"
@@ -23,7 +23,7 @@
 
         <!--상태 메시지-->
         <TextView
-            android:id="@+id/cnt"
+            android:id="@+id/item_cnt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
